@@ -2,5 +2,5 @@ A pointless discord bot that is designed to be used with models provided by Olla
 
 ## Dependencies
 ```bash 
-pip3 install ollama discord aiofiles aiohttp python-dotenv
+pip3 install -r dependencies.txt
 ```
