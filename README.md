@@ -1,0 +1,1 @@
+A pointless discord bot that is designed to be used with models provided by Ollama.
