@@ -11,7 +11,7 @@ import aiofiles
 load_dotenv()
 token = os.getenv('DISCORD_TOKEN')
 client = ollama.Client()
-model = "qwen3-vl:latest"
+model = os.getenv('MODEL')
 
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 intents=discord.Intents.default()
@@ -26,12 +26,10 @@ async def on_ready():
 
 @bot.event
 async def on_presence_update(before, after):
-    # Check if user went from offline/invisible to online
     if before.status in [discord.Status.offline, discord.Status.invisible] and after.status == discord.Status.online:
-        print(f"{after.name} is now online")
-        # You can send a message to a specific channel if needed
+        # print(f'{after.name} is now online')
         channel = bot.get_channel(1467117943459545193)
-        await channel.send(f"{after.name} is now online!")
+        await channel.send(f'{after.name} is now online!')
 
 @bot.command()
 async def m(ctx, *, message):
@@ -42,7 +40,7 @@ async def m(ctx, *, message):
         for attachment in ctx.message.attachments:
             if attachment.content_type and attachment.content_type.startswith('image/'):
                 has_image = True
-                image_path = f"temp_{attachment.filename}"
+                image_path = f'temp_{attachment.filename}'
                 await attachment.save(image_path)
                 break
 
@@ -52,7 +50,7 @@ async def m(ctx, *, message):
         for word in words:
             if word.startswith('http') and any(word.lower().endswith(ext) for ext in image_extensions):
                 has_image = True
-                image_path = f"temp_image{os.path.splitext(word)[1]}"
+                image_path = f'temp_image{os.path.splitext(word)[1]}'
                 async with aiohttp.ClientSession() as session:
                     async with session.get(word) as resp:
                         if resp.status == 200:
@@ -62,7 +60,7 @@ async def m(ctx, *, message):
 
     if has_image:
         try:
-            response = chat(model=model, messages=[{"role": "user", "content": message, "images": [image_path]}])
+            response = chat(model=model, messages=[{'role': 'user', 'content': message, 'images': [image_path]}])
             await ctx.send(response['message']['content'])
         finally:
             if image_path and os.path.exists(image_path):
